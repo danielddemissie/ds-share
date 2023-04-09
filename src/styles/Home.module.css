@@ -1,0 +1,3 @@
+.btn {
+  @apply h-10 font-semibold text-white bg-teal-900 px-6 py-2 rounded-md cursor-pointer shadow-lg;
+}
