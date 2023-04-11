@@ -1,11 +1,23 @@
-.btn {
-  @apply h-10 font-semibold text-white bg-teal-900 px-6 py-2 rounded-md cursor-pointer shadow-lg;
+.main {
+  @apply flex min-h-screen flex-col items-center gap-2 w-full;
+}
+
+.inputWrapper {
+  @apply h-32 relative shadow-md items-center rounded-md bg-slate-100  flex justify-center top-0 cursor-pointer mt-4 w-1/2;
 }
 
 .input {
-  @apply block w-full text-sm text-slate-500
-  file:mr-4 file:py-2 file:px-4
-  file:rounded-full file:border-0
-  file:text-sm file:font-semibold
-  file:bg-violet-50;
+  @apply w-full text-sm text-slate-500 h-full hidden cursor-pointer;
+}
+
+.galleryWrapper {
+  @apply flex flex-wrap justify-center items-center space-x-6 space-y-6;
+}
+
+.section {
+  @apply flex flex-col items-center justify-center gap-2 w-full;
+}
+
+.btn {
+  @apply w-1/2 h-20 px-6 py-2 rounded-md text-center text-white font-semibold bg-blue-400;
 }

@@ -1,20 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 const useImages = (query: string, count: number) => {
-  const ACCESS_KEY = "qbbbwL6QszDWe716nOSkIkx64C_AieIjKTDk5Or2wwI";
   const [images, setImages] = useState([]);
 
   useEffect(() => {
     const loadImages = async () => {
       try {
-        const response = await fetch(
-          `https://api.unsplash.com/photos/random?query=${query}&count=${count}`,
-          {
-            headers: {
-              Authorization: `Client-ID ${ACCESS_KEY}`,
-            },
-          }
-        );
+        const response = await fetch(`https://gateway.pinata.cloud/ipfs`, {
+          headers: {
+            Authorization: `Client-ID ${process.env.ACCESS_KEY}`,
+          },
+        });
         const data = await response.json();
         setImages(data);
       } catch (error) {
@@ -23,9 +19,9 @@ const useImages = (query: string, count: number) => {
     };
 
     loadImages();
-  }, [query, count]);
+  }, []);
 
-  return images;
+  return useMemo(() => images, [images]);
 };
 
 export default useImages;
