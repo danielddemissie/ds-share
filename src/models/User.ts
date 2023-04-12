@@ -14,21 +14,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user",
-  },
-  links: {
-    type: [
-      {
-        title: String,
-        url: String,
-        isPrivate: Boolean,
-      },
-    ],
-    default: [],
-  },
 });
 
 export default mongoose.models.User || mongoose.model("User", userSchema);
