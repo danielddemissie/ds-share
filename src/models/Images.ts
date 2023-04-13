@@ -1,17 +1,28 @@
 import mongoose from "mongoose";
 
-const imageSchema = new mongoose.Schema(
-  {
-    cid: {
-      type: String,
-      required: true,
-    },
-    userId: {
-      type: mongoose.Types.ObjectId,
-      required: true,
-    },
+export interface Image {
+  IpfsHash: string;
+  PinSize: number;
+  Timestamp: string;
+}
+
+const imageSchema = new mongoose.Schema({
+  IpfsHash: {
+    type: String,
+    required: true,
   },
-  { timestamps: true }
-);
+  pinSize: {
+    type: Number,
+    required: true,
+  },
+  userId: {
+    type: mongoose.Types.ObjectId,
+    required: true,
+  },
+  timestamp: {
+    type: String,
+    required: true,
+  },
+});
 
 export default mongoose.models.User || mongoose.model("User", imageSchema);
