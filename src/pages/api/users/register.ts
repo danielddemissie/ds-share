@@ -9,30 +9,37 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { name, email, password } = req.body;
-    await dbConnect();
-
     try {
-      const existingUser = await User.findOne({ email });
+      await dbConnect();
+      const { name, password } = req.body;
+      if (!name) {
+        res.status(400).json({ messaf: "Missing name" });
+        return;
+      }
+      if (!password) {
+        res.status(400).json({ message: "Missing password" });
+        return;
+      }
+      const existingUser = await User.findOne({ name });
       if (existingUser) {
-        res.status(400).json({ error: "Email already exists" });
+        res.status(400).json({ message: "User name already exists" });
         return;
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = new User({
         name,
-        email,
         password: hashedPassword,
       });
 
       const savedUser = await newUser.save();
       const token = jwt.sign(
         { userId: savedUser._id },
-        process.env.JWT_SECRET as string
+        process.env.JWT_SECRET as string,
+        { expiresIn: "1d" }
       );
 
-      res.status(201).json({ token });
+      res.status(201).json({ message: "User created successfully", token });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });

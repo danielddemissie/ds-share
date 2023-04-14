@@ -1,11 +1,14 @@
 import { useState } from "react";
 import styles from "../styles/Home.module.css";
 import axios from "axios";
+import Image from "next/image";
 
 const FileUpload = () => {
   const [selectedFile, setSelectedFile] = useState<any>();
+
   const changeHandler = (event: any) => {
     setSelectedFile(event.target.files[0]);
+    console.log("selectedFile", event.target.files[0]);
   };
 
   const handleSubmission = async () => {
@@ -31,11 +34,31 @@ const FileUpload = () => {
         }
       );
 
-      console.log("cleicke", res.data);
-      //TODO: send me to backend
+      console.log("response-->", res.data);
+      const token = localStorage.getItem("token");
+      console.log("token-->", token);
+      const image = await axios.post(
+        "/api/users/images",
+        {
+          ipfsHash: res.data.IpfsHash,
+          pinSize: res.data.PinSize,
+          isDuplicate: res.data.IsDuplicate ?? false,
+          timestamp: res.data.Timestamp,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("image-->", image);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleRemoveImg = () => {
+    setSelectedFile("");
   };
 
   return (
@@ -47,11 +70,31 @@ const FileUpload = () => {
         className={styles.input}
         type="file"
         id="input"
+        onClick={(e: any) => {
+          e.target.value = null;
+        }}
         onChange={changeHandler}
       />
       <button className={styles.btn} onClick={handleSubmission}>
         Upload
       </button>
+      {selectedFile && (
+        <div className="temp-show">
+          <Image
+            width={400}
+            height={400}
+            alt="temp image"
+            className="temp-image"
+            src={URL.createObjectURL(selectedFile)}
+          />
+          <div className="image-action">
+            <h2>{selectedFile.name}</h2>
+            <button className="remove-btn" onClick={handleRemoveImg}>
+              Remove
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

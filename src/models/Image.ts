@@ -1,13 +1,7 @@
 import mongoose from "mongoose";
 
-export interface Image {
-  IpfsHash: string;
-  PinSize: number;
-  Timestamp: string;
-}
-
 const imageSchema = new mongoose.Schema({
-  IpfsHash: {
+  ipfsHash: {
     type: String,
     required: true,
   },
@@ -25,4 +19,4 @@ const imageSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.User || mongoose.model("User", imageSchema);
+export default mongoose.models.Image || mongoose.model("Image", imageSchema);

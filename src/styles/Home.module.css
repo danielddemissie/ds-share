@@ -21,3 +21,23 @@
 .btn {
   @apply w-1/2 h-20 px-6 py-2 rounded-md text-center text-white font-semibold bg-blue-400;
 }
+
+.temp-show {
+  @apply flex flex-col items-start;
+}
+
+.temp-image {
+  @apply object-cover rounded-t-md;
+}
+
+.image-action {
+  @apply flex justify-between gap-2 w-full bg-slate-300 py-3 px-2 rounded-b-md;
+}
+
+.image-action h2 {
+  @apply text-lg text-black font-thin;
+}
+
+.remove-btn {
+  @apply px-2 py-1 rounded-md text-center text-white  bg-red-400;
+}

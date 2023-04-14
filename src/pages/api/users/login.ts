@@ -9,27 +9,30 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { email, password } = req.body;
+    const { name, password } = req.body;
     await dbConnect();
 
     try {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ name });
       if (!user) {
-        res.status(400).json({ error: "Invalid email or password" });
+        res.status(400).json({ error: "User not found" });
         return;
       }
 
       const match = await bcrypt.compare(password, user.password);
       if (!match) {
-        res.status(400).json({ error: "Invalid email or password" });
+        res.status(400).json({ error: "Invalid name or password" });
         return;
       }
 
       const token = jwt.sign(
         { userId: user._id },
-        process.env.JWT_SECRET as string
+        process.env.JWT_SECRET as string,
+        { expiresIn: "1d" }
       );
-      res.status(200).json({ token });
+      user.password = undefined;
+      user.__v = undefined;
+      res.status(200).json({ user, token });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
