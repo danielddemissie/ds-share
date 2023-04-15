@@ -9,9 +9,13 @@ const imageSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  userId: {
+  ownerId: {
     type: mongoose.Types.ObjectId,
     required: true,
+  },
+  sharedWith: {
+    type: [mongoose.Types.ObjectId],
+    default: [],
   },
   timestamp: {
     type: String,
