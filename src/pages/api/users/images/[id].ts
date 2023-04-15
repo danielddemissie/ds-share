@@ -1,4 +1,3 @@
-//TODO: handle specific image actions like share, delete, etc.
 import { NextApiRequest, NextApiResponse } from "next";
 import authMiddleware from "@/lib/middlewares";
 import Image from "@/models/Image";
@@ -48,38 +47,24 @@ export default async function handler(
       res.json({ message: "Image deleted" });
       break;
     case "PUT":
-      const { ipfsHash, pinSize, timestamp, isDuplicate } = req.body;
-      if (!ipfsHash) {
+      const { ipfsHash, pinSize, timestamp, isDuplicate, isPublic } = req.body;
+      const oldImage = await Image.findById(id);
+      if (oldImage.isPublic && !isPublic) {
         res.status(400).json({
-          message: "Missing ipfsHash",
+          message: "Cannot make a public image private",
         });
         return;
       }
-      if (!pinSize) {
-        res.status(400).json({
-          message: "Missing pinSize",
-        });
-        return;
-      }
-      if (!timestamp) {
-        res.status(400).json({
-          message: "Missing timestamp",
-        });
-        return;
-      }
-
-      const updatedImage = await Image.findOneAndUpdate(
-        { _id: id, userId: user._id },
-        {
-          ipfsHash,
-          pinSize,
-          timestamp,
-          isDuplicate: isDuplicate ?? false,
-          userId: user._id,
-        },
-        { new: true }
-      );
-      if (!updatedImage) {
+      const updatedData = {
+        ipfsHash: ipfsHash ?? oldImage.ipfsHash,
+        pinSize: pinSize ?? oldImage.pinSize,
+        timestamp: timestamp ?? oldImage.timestamp,
+        isDuplicate: isDuplicate ?? oldImage.isDuplicate,
+        isPublic: isPublic ?? oldImage.isPublic,
+      };
+      oldImage.set(updatedData);
+      await oldImage.save();
+      if (!oldImage) {
         res.status(404).json({
           message: "Image not found",
         });
@@ -87,7 +72,7 @@ export default async function handler(
       }
       res.status(200).json({
         message: "Image updated",
-        data: updatedImage,
+        data: oldImage,
       });
     default:
       break;

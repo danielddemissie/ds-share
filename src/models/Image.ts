@@ -17,6 +17,14 @@ const imageSchema = new mongoose.Schema({
     type: [mongoose.Types.ObjectId],
     default: [],
   },
+  isDuplicate: {
+    type: Boolean,
+    default: false,
+  },
+  isPublic: {
+    type: Boolean,
+    default: false,
+  },
   timestamp: {
     type: String,
     required: true,
