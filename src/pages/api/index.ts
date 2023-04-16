@@ -1,11 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Image from "@/models/Image";
+import dbConnect from "@/lib/db";
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
   const { method } = req;
+  await dbConnect();
   switch (method) {
     case "POST":
       res.status(200).json({ message: "Welcome to ds-share API" });

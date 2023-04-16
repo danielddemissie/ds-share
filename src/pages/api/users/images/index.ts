@@ -1,12 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Image from "@/models/Image";
 import authMiddleware from "@/lib/middlewares";
+import dbConnect from "@/lib/db";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const user = await authMiddleware(req, res);
+  await dbConnect();
   switch (req.method) {
     case "POST":
       const { ipfsHash, pinSize, timestamp, isDuplicate } = req.body;
@@ -34,7 +36,7 @@ export default async function handler(
         pinSize,
         timestamp,
         isDuplicate: isDuplicate ?? false,
-        userId: user._id,
+        ownerId: user._id,
       });
       image.__v = undefined;
       res.status(200).json({
@@ -44,7 +46,7 @@ export default async function handler(
 
       break;
     case "GET":
-      const images = await Image.find({ userId: user._id }).select(["-__v"]);
+      const images = await Image.find({ ownerId: user._id }).select(["-__v"]);
       res.status(200).json({
         message: "User images",
         data: images,

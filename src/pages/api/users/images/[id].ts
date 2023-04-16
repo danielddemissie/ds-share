@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import authMiddleware from "@/lib/middlewares";
 import Image from "@/models/Image";
+import dbConnect from "@/lib/db";
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,17 +9,17 @@ export default async function handler(
 ) {
   const user = await authMiddleware(req, res);
   const { id } = req.query;
-
+  await dbConnect();
   switch (req.method) {
     case "POST":
-      const sharedWith = req.body;
+      const { sharedWith } = req.body;
       if (!sharedWith || !sharedWith.length) {
         res.status(400).json({
           message: "Missing sharedWith should be an array of user ids",
         });
         return;
       }
-      const image = await Image.findOne({ _id: id, userId: user._id });
+      const image = await Image.findOne({ _id: id, ownerId: user._id });
       if (!image) {
         res.status(404).json({
           message: "Image not found",
@@ -26,8 +27,10 @@ export default async function handler(
         return;
       }
 
-      image.sharedWith = [...sharedWith, ...image.sharedWith];
-      await image.save();
+      //?: ignore when user already shared
+      image.sharedWith = Array.from(
+        new Set([...sharedWith, ...image.sharedWith])
+      );
       res.status(200).json({
         message: "Image shared",
         data: image,
@@ -36,7 +39,7 @@ export default async function handler(
     case "DELETE":
       const deletedImage = await Image.findOneAndDelete({
         _id: id,
-        userId: user._id,
+        ownerId: user._id,
       });
       if (!deletedImage) {
         res.status(404).json({
@@ -49,7 +52,7 @@ export default async function handler(
     case "PUT":
       const { ipfsHash, pinSize, timestamp, isDuplicate, isPublic } = req.body;
       const oldImage = await Image.findById(id);
-      if (oldImage.isPublic && !isPublic) {
+      if (oldImage.isPublic && isPublic === false) {
         res.status(400).json({
           message: "Cannot make a public image private",
         });
@@ -61,6 +64,7 @@ export default async function handler(
         timestamp: timestamp ?? oldImage.timestamp,
         isDuplicate: isDuplicate ?? oldImage.isDuplicate,
         isPublic: isPublic ?? oldImage.isPublic,
+        ownerId: user._id,
       };
       oldImage.set(updatedData);
       await oldImage.save();

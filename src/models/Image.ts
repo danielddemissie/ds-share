@@ -12,9 +12,10 @@ const imageSchema = new mongoose.Schema({
   ownerId: {
     type: mongoose.Types.ObjectId,
     required: true,
+    ref: "users",
   },
   sharedWith: {
-    type: [mongoose.Types.ObjectId],
+    type: [String],
     default: [],
   },
   isDuplicate: {

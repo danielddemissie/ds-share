@@ -24,6 +24,8 @@ const FileUpload = () => {
     formData.append("pinataOptions", options);
 
     try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
       const res = await axios.post(
         "https://api.pinata.cloud/pinning/pinFileToIPFS",
         formData,
@@ -33,10 +35,6 @@ const FileUpload = () => {
           },
         }
       );
-
-      console.log("response-->", res.data);
-      const token = localStorage.getItem("token");
-      console.log("token-->", token);
       const image = await axios.post(
         "/api/users/images",
         {
@@ -51,7 +49,6 @@ const FileUpload = () => {
           },
         }
       );
-      console.log("image-->", image);
     } catch (error) {
       console.log(error);
     }

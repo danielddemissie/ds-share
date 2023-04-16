@@ -4,8 +4,8 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "images.unsplash.com",
-        pathname: "/photo-*",
+        hostname: "gateway.pinata.cloud",
+        pathname: "/ipfs/*",
         port: "",
       },
     ],

@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 import { Decoded } from "@/types";
 import User from "@/models/User";
+import dbConnect from "./db";
 
 export default async function authMiddleware(
   req: NextApiRequest,
@@ -11,6 +12,7 @@ export default async function authMiddleware(
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")
   ) {
+    await dbConnect();
     const token = req.headers.authorization.split("Bearer ")[1];
     try {
       const { userId } = jwt.verify(

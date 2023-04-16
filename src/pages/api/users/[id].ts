@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import authMiddleware from "@/lib/middlewares";
 import User from "@/models/User";
+import dbConnect from "@/lib/db";
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,7 +9,7 @@ export default async function handler(
 ) {
   const user = await authMiddleware(req, res);
   const { id } = req.query;
-
+  await dbConnect();
   switch (req.method) {
     case "GET":
       res.status(200).json({
