@@ -1,32 +1,31 @@
+import { useEffect, useState } from "react";
 import axios from "axios";
-import styles from "../styles/Home.module.css";
-import FileUpload from "@/components/FileUpload";
-import Image from "next/image";
-
-export async function getServerSideProps() {
-  const res = await axios("http://localhost:3000/api");
-  const images = res.data.data;
-  return {
-    props: {
-      images,
-    },
-  };
-}
+import Landing from "../components/Landing";
+import Dashboard from "../components/Dashboard";
 
 export default function Home({ images }: { images: string[] }) {
-  return (
-    <main className={styles.main}>
-      <FileUpload />
-      {images.map((img: any) => (
-        <div>
-          <Image
-            src={`https://gateway.pinata.cloud/ipfs/${img.ipfsHash}`}
-            width={300}
-            height={400}
-            alt="image"
-          />
-        </div>
-      ))}
-    </main>
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    async function getUserDetail() {
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+
+      if (token && userId) {
+        const resp = await axios.get(`/api/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (resp.data.data) {
+          localStorage.setItem("user-detail", JSON.stringify(resp.data.data));
+          setIsLoggedIn(true);
+        }
+      } else {
+      }
+    }
+
+    getUserDetail();
+  }, []);
+  return <>{isLoggedIn ? <Dashboard /> : <Landing />}</>;
 }

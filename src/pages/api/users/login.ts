@@ -32,7 +32,9 @@ export default async function handler(
       );
       user.password = undefined;
       user.__v = undefined;
-      res.status(200).json({ user, token });
+      res
+        .status(200)
+        .json({ user, message: "User signin successfully", token });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });

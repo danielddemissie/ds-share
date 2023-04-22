@@ -1,0 +1,21 @@
+.form {
+  @apply w-4/5 flex flex-col justify-evenly items-start border-spacing-1 rounded-md;
+  height: 50vh;
+}
+
+.formWrapper {
+  @apply flex h-screen items-center justify-center;
+}
+
+.title {
+  @apply text-xl font-bold text-black text-left;
+}
+
+.label {
+  @apply pr-2 font-semibold text-lg;
+}
+
+.btnForm {
+  @apply rounded-md px-20 py-3 font-semibold;
+  background-color: #7cd2d7;
+}
