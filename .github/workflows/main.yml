@@ -1,0 +1,22 @@
+name: Create .env file
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create .env file
+        run: |
+          echo "ENV_VARIABLE_1=${{ secrets.ENV_VARIABLE_1 }}" >> .env
+          echo "ENV_VARIABLE_2=${{ secrets.ENV_VARIABLE_2 }}" >> .env
+
+      - name: Show .env file
+        run: cat .env
